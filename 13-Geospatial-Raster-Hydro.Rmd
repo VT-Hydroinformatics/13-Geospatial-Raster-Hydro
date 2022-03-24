@@ -1,4 +1,4 @@
-# Geospatial R Raster - Hydro Analyses {#rgeoraster}
+# Geospatial R Raster - Hydro Analyses 
 
 ## Introduction
 
@@ -6,11 +6,11 @@ The following activity is available as a template github repository at the follo
 
 For more: https://geocompr.robinlovelace.net/spatial-class.html#raster-data
 
-To read in details about any of the WhiteboxTools used in this activity, check out the user manual: https://jblindsay.github.io/wbt_book/intro.html
+To read in detail about any of the WhiteboxTools used in this activity, check out the user manual: https://jblindsay.github.io/wbt_book/intro.html
 
-In this activity we are going to explore how to work with raster data in R while computing several hydrologicall-relevant landscape metrics using the R package whitebox tools. Whitebox is very powerful and has an extensive set of tools, but it is not on CRAN. You must install it with the commented-out line at the top of the next code chunk.
+In this activity we are going to explore how to work with raster data in R while computing several hydrologically-relevant landscape metrics using the R package whitebox tools. Whitebox is very powerful and has an extensive set of tools, but it is not on CRAN. You must install it with the commented-out line at the top of the next code chunk.
 
-Install/Load necessary packages and data 
+Install/Load necessary packages and data:
 
 ```{r, message=FALSE, warning=FALSE}
 #install.packages("whitebox", repos="http://R-Forge.R-project.org")
@@ -43,7 +43,9 @@ Next, an artifact of outputting the DEM for this analysis is that there are a bu
 tmap_mode("view")
 
 dem <- raster("McDonaldHollowDEM/brushDEMsm_5m.tif", crs = '+init=EPSG:4326')
- 
+
+writeRaster(dem, "McDonaldHollowDEM/brushDEMsm_5m_crs.tif", overwrite = TRUE) 
+
 dem[dem < 1500] <- NA
 ```
 
@@ -80,14 +82,14 @@ We will then read the output hillshade in with raster() and make a map with tmap
 
 Notice how much more you can see in the landscape!
 ```{r}
-wbt_hillshade(dem = "McDonaldHollowDEM/brushDEMsm_5m.tif",
+wbt_hillshade(dem = "McDonaldHollowDEM/brushDEMsm_5m_crs.tif",
               output = "McDonaldHollowDEM/brush_hillshade.tif",
               azimuth = 115)
 
-hillshade <- raster("McDonaldHollowDEM/brush_hillshade.tif", crs = '+init=EPSG:4326')
+hillshade <- raster("McDonaldHollowDEM/brush_hillshade.tif")
 
 tm_shape(hillshade)+
-  tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
+  tm_raster(style = "cont", palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()
 ```
 
@@ -109,22 +111,25 @@ The second way we can deal with these features is to "breach" them. This means t
 
 ![Breached](images/breached.png "Breached")
 
-We are going to do both to prep our DEM. We will first fill pits that are only one DEM cell large using the wbt_fill_single_cell_pits() function. Then, for larger pits/depressions we will use wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming the depressions.
+We are going to do both to prep our DEM. We will first breach depressions using wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming depressions.
 
 To use this function we will also give it a maximum distance to search for a place to breach the depression (dist) and tell with whether to fill any depressions leftover after it does its thing (fill).
 
-Be careful to give the breach depressions function the result of the single cell fill function, not the original DEM!
+Then, because this algorithm can leave some remaining depressions, we wil use wbt_fill_depressions_wang_and_liu() to clean up any remaining issues. 
+
+Be careful to give wbt_fill_depressions_wang_and_liu() the result of the breach depressions function, not the original DEM!
 
 ```{r}
-wbt_fill_single_cell_pits(
-                    dem = "McDonaldHollowDEM/brushDEMsm_5m.tif",
-                    output = "McDonaldHollowDEM/bmstationdem_filled.tif")
-
 wbt_breach_depressions_least_cost(
-                     dem = "McDonaldHollowDEM/bmstationdem_filled.tif",
-                     output = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
-                     dist = 5,
-                     fill = TRUE)
+  dem = "McDonaldHollowDEM/brushDEMsm_5m_crs.tif",
+  output = "McDonaldHollowDEM/bmstationdem_breached.tif",
+  dist = 5,
+  fill = TRUE)
+
+wbt_fill_depressions_wang_and_liu(
+  dem = "McDonaldHollowDEM/bmstationdem_breached.tif",
+  output = "McDonaldHollowDEM/bmstationdem_filled_breached.tif"
+)
 ```
 
 ## Visualize filled sinks and breached depressions
@@ -140,8 +145,7 @@ Where where changes made?
 What do you think these pit/depression features represent in real life?
 
 ```{r}
-filled_breached <- raster("McDonaldHollowDEM/bmstationdem_filled_breached.tif",
-                          crs = '+init=EPSG:4326')
+filled_breached <- raster("McDonaldHollowDEM/bmstationdem_filled_breached.tif")
 
 ## What did this do?
 difference <- dem - filled_breached
@@ -177,7 +181,7 @@ Where are the lowest values?
 wbt_d8_flow_accumulation(input = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                          output = "McDonaldHollowDEM/D8FA.tif")
 
-d8 <- raster("McDonaldHollowDEM/D8FA.tif", crs = '+init=EPSG:4326')
+d8 <- raster("McDonaldHollowDEM/D8FA.tif")
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
@@ -208,7 +212,7 @@ Which do you think represents reality better? Why?
 wbt_d_inf_flow_accumulation("McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                          "McDonaldHollowDEM/DinfFA.tif")
 
-dinf <- raster("McDonaldHollowDEM/DinfFA.tif", crs = '+init=EPSG:4326')
+dinf <- raster("McDonaldHollowDEM/DinfFA.tif")
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
@@ -225,7 +229,7 @@ The formula for TWI is
 
 $TWI = Ln(As / tan(Slope))$
 
-Where As is the specific contributing area and Slope is the slope at the cell. 
+Where As is the specific contributing area and Slope is the slope at the cell. Specific contributing area is contributing area per unit contour length.
 
 This is the first function we will use that doesn't just take a DEM as input. The wbt_wetness_index() function takes a raster of specific contributing area and another of slope. We will need to create each of these first and then pass them to the function (since we didn't calculate specific contributing area when we used the flow accumulation algorithms above)
 
@@ -246,7 +250,7 @@ wbt_wetness_index(sca = "McDonaldHollowDEM/DinfFAsca.tif",
                   slope = "McDonaldHollowDEM/demslope.tif",
                   output = "McDonaldHollowDEM/TWI.tif")
 
-twi <- raster("McDonaldHollowDEM/TWI.tif", crs = '+init=EPSG:4326')
+twi <- raster("McDonaldHollowDEM/TWI.tif")
 
 twi[twi > 0] <- NA
 
@@ -259,20 +263,32 @@ tm_shape(twi)+
 
 ## Downslope TWI
 
-Another index of topographic wetness is the downslope index. This index considers the same things as TWI, but looks a specified distance downslope to use as the slope at the cell. Essentially, this index captures the fact that you should expect a 50 meter long bench on a hillslope to be wetter than a 1 meter long bench, because the 1 meter one would drain a lot faster. 
+Another index of interest is the downslope index. The downslope index is the measure of slope between a cell and then another cell a specified distance downslope. We can replace the regular slope number in the TWI calculation with downslope index to calculate TWId or Downslope TWI.
+
+$TWI = Ln(As / tan(DownslopeIndex))$
+
+As is specific contributing area, and the tan of the downslope index can be output from the whitebox downslope index tool. We have to do this calculation with the rasters becasue there isn't a specific whitebox tool that calculateds TWId.
+
+Essentially, this index captures the fact that you should expect a 50 meter long bench on a hillslope to be wetter than a 1 meter long bench, because the 1 meter one would drain a lot faster. 
 
 Similar to TWI we get some edge issues so we will filter the result to make the visualization look better.
 
 ```{r}
 wbt_downslope_index(dem = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
-                    output = "McDonaldHollowDEM/TWId.tif")
+                    output = "McDonaldHollowDEM/downslope_index.tif",
+                    out_type = "tangent")
 
-twid <- raster("McDonaldHollowDEM/TWId.tif", crs = '+init=EPSG:4326')
-twid[twid > 4000000 | twid <= 0] <- NA
+downslope_index <- raster("McDonaldHollowDEM/downslope_index.tif")
+
+dinfFA <- raster("McDonaldHollowDEM/DinfFAsca.tif")
+
+twid <- log(dinfFA / downslope_index)
+
+twid[twid > 40] <- NA
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
-tm_shape(log(twid))+
+tm_shape(twid)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
   tm_scale_bar()
 ```
@@ -301,7 +317,7 @@ wbt_raster_streams_to_vector(streams = "McDonaldHollowDEM/raster_streams.tif",
                              d8_pntr = "McDonaldHollowDEM/D8pointer.tif",
                              output = "McDonaldHollowDEM/streams.shp")
 
-streams <- st_read("McDonaldHollowDEM/streams.shp", crs = '+init=EPSG:4326')
+streams <- st_read("McDonaldHollowDEM/streams.shp")
 
 tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
@@ -361,7 +377,7 @@ Then: use the same exact syntax as when we extracted values from a single raster
 We can then use cbind() to slap the extracted data onto our existing dataframe (gain, NOT the spatial one, just the original regular one)
 
 ```{r}
-slope <- raster("McDonaldHollowDEM/demslope.tif", crs = '+init=EPSG:4326')
+slope <- raster("McDonaldHollowDEM/demslope.tif")
 
 raster_stack <- stack(twi, twid, slope, dem)
 
