@@ -13,8 +13,6 @@ In this activity we are going to explore how to work with raster data in R while
 Install/Load necessary packages and data:
 
 ```{r, message=FALSE, warning=FALSE}
-#install.packages("whitebox", repos="http://R-Forge.R-project.org")
-
 library(tidyverse)
 library(raster)
 library(sf)
