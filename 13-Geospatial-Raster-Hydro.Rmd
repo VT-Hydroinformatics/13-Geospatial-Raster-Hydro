@@ -343,7 +343,7 @@ pointsSP <- SpatialPoints(points, proj4string = CRS("+proj=longlat +datum=WGS84"
 
 tmap_mode("plot")
 
-tm_shape(log(twid))+
+tm_shape(twid)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE)+
   tm_scale_bar()+
 tm_shape(pointsSP)+
