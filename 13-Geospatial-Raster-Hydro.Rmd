@@ -19,6 +19,9 @@ library(sf)
 library(whitebox)
 library(tmap)
 
+#If installing/using whitebox for the first time
+#install_whitebox()
+
 whitebox::wbt_init()
 
 theme_set(theme_classic())
