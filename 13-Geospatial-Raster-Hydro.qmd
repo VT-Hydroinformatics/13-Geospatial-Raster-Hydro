@@ -71,7 +71,7 @@ tm_shape(dem)+
 
 ## Generate a hillshade
 
-Since the DEM is just elevation values, it is tough to see much about the landscape. We can see the stream network and general featuers, but not much more. BUT those features are there! We just need other ways to illuminate them. One common way to visualize these kind of data is a hillshade. This basically "lights" the landscape with a synthetic sun, casting shadows and illuminating other features. You can control the angle of the sun and from what direction it is shining to control the look of the image. We will position the sun in the south-south east so it illuminates the south side of Brush Mountain well.
+Since the DEM is just elevation values, it is tough to see much about the landscape. We can see the stream network and general features, but not much more. BUT those features are there! We just need other ways to illuminate them. One common way to visualize these kind of data is a hillshade. This basically "lights" the landscape with a synthetic sun, casting shadows and illuminating other features. You can control the angle of the sun and from what direction it is shining to control the look of the image. We will position the sun in the south-south east so it illuminates the south side of Brush Mountain well.
 
 We will use the whitebox tools function wbt_hillshade() to produce a hillshade.
 
@@ -451,18 +451,17 @@ tm_shape(demXslope)+
 
 ## Extra: plot topo characteristics against one another
 
-Here we convert slope and elevation each to a dataframe, join them, and them plot a 2 dimensional density plot. 
+Here we convert the raster stack to a dataframe and them plot a 2 dimensional density plot. 
 
 ```{r}
-slopedf <- as.data.frame(slope)
-elevdf <- as.data.frame(dem)
+rasters_df <- as.data.frame(raster_stack)
 
-slopeelev <- cbind(slopedf, elevdf)
-
-ggplot(slopeelev, aes(x = demslope, y = brushDEMsm_5m))+
+ggplot(rasters_df, aes(x = demslope, y = brushDEMsm_5m))+
   geom_density_2d_filled()+
   ylab("Elevation (ft)")+
   xlab("Slope (%)")
+
+
 ```
 
 

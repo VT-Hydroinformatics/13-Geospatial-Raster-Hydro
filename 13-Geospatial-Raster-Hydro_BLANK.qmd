@@ -302,7 +302,7 @@ Here's a super simple example to just illustate that you can do this: we will ju
 
 ## Extra: plot topo characteristics against one another
 
-Here we convert slope and elevation each to a dataframe, join them, and them plot a 2 dimensional density plot. 
+Here we convert the raster stack to a dataframe and them plot a 2 dimensional density plot. 
 
 ```{r}
 
