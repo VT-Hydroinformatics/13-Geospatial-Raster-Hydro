@@ -43,7 +43,7 @@ For this activity we are going to use a 5-meter DEM of a portion of a Brush Moun
 *What does DEM stand for? What does it show?\
 *What does it mean that the DEM is "5-meter"?
 
-We will use raster() to load the DEM. We let R know that coordinate system is WGS84 by setting the crs argument equal to '+init=EPSG:4326', where 4326 is the EPSG number for WGS84.
+We will use rast() to load the DEM. We let R know that coordinate system is WGS84 by setting the crs equal to '+init=EPSG:4326' using the crs() funciton, where 4326 is the EPSG number for WGS84.
 
 Next, an artifact of outputting the DEM for this analysis is that there are a bunch of errant cells around the border that don't belong in the DEM. If we make a map with them, it really throws off the scale. So we are going to set any elevation values below 1500 ft to NA. Note how this is done as if the dem was just a normal vector. COOL!
 
@@ -61,7 +61,7 @@ Now let's plot the DEM. We will use the same syntax as we did in the previous le
 
 ## Generate a hillshade
 
-Since the DEM is just elevation values, it is tough to see much about the landscape. We can see the stream network and general featuers, but not much more. BUT those features are there! We just need other ways to illuminate them. One common way to visualize these kind of data is a hillshade. This basically "lights" the landscape with a synthetic sun, casting shadows and illuminating other features. You can control the angle of the sun and from what direction it is shining to control the look of the image. We will position the sun in the south-south east so it illuminates the south side of Brush Mountain well.
+Since the DEM is just elevation values, it is tough to see much about the landscape. We can see the stream network and general features, but not much more. BUT those features are there! We just need other ways to illuminate them. One common way to visualize these kind of data is a hillshade. This basically "lights" the landscape with a synthetic sun, casting shadows and illuminating other features. You can control the angle of the sun and from what direction it is shining to control the look of the image. We will position the sun in the south-south east so it illuminates the south side of Brush Mountain well.
 
 We will use the whitebox tools function wbt_hillshade() to produce a hillshade.
 
@@ -208,6 +208,7 @@ Similar to TWI we get some edge issues so we will filter the result to make the 
 
 ```{r}
 
+
 ```
 
 ## Map Stream Network
@@ -232,9 +233,9 @@ Now let's say you have some sample or monitoring sites in this study area. You m
 
 ### Import and plot points
 
-First, we will read in a csv of point locations.
 
-Then we have to convert it to a spatial datatype. We will use SpatialPoints() to do this. We need to give it our points, and then cell it what projection our data is in. We are using geographic coordinates (longlat) and the WGS84 datum (most gps' use this).
+First, we will read in a csv of point locations.
+Then we have to convert it to a spatial datatype. We will use st_as_sf() to do this. We need to give it our points, and then cell it what projection and format our data is in. We are using geographic coordinates (lon, lat) and the WGS84 datum (most gps' use this and it is EPSG 4326).
 
 Then we will plot the points just to make sure they show up where we expect.
 
@@ -255,7 +256,7 @@ This function just spits out a vector of values disconnected from our points, so
 
 Maybe you want a bunch of topographic information for all your sample sites. You could repeat the process above for each one, or we can stack the rasters of interest and then pull out values for each using the same method as below. WHOA!
 
-So: we give stack() each raster we want data from, using the rasters we read in earlier in the activity
+So: we give c() each raster we want data from, using the rasters we read in earlier in the activity
 
 Then: use the same exact syntax as when we extracted values from a single raster, but give the extract funciton the stacked raster.
 
@@ -302,7 +303,7 @@ Here's a super simple example to just illustate that you can do this: we will ju
 
 ## Extra: plot topo characteristics against one another
 
-Here we convert the raster stack to a dataframe and them plot a 2 dimensional density plot. 
+Here we convert the raster stack to a dataframe and then plot a 2 dimensional density plot. 
 
 ```{r}
 
