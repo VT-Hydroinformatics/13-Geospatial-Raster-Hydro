@@ -1,8 +1,24 @@
 ---
-title: "Geospatial R Raster"
+title: "Chapter 13: Geospatial R Raster"
+date: today
+github: https://github.com/VT-Hydroinformatics/13-Geospatial-Raster-Hydro
+author:
+  - name: JP Gannon
+    orcid: 0000-0002-4595-3214
+    github: jpgannon
+    url: https://jpgannon.github.io/
+    affiliation: 
+      - name: Virginia Tech
+        url: https://www.vt.edu/
 format:
   html: 
     self-contained: true
+  ipynb:
+      nb-frontmatter: true
+jupyter: 
+  kernel: ir
+execute: 
+  enabled: true
 ---
 
 # Geospatial R Raster - Hydro Analyses 
@@ -27,7 +43,7 @@ library(whitebox)
 library(tmap)
 
 #If installing/using whitebox for the first time
-#install_whitebox()
+install_whitebox()
 
 whitebox::wbt_init()
 
@@ -111,15 +127,27 @@ But we have to cool our jets for a second. If we are going to do hydrologic anal
 
 Our hydrologic tools often work on the premise of following water down the hillslope based on the elevation of the cells in the DEM. If, along a flowpath, there is no cell lower than a location, the algorithm we are using will stop there. This is called a sink, pit, or depression. See the figure below.
 
-![Sink](images/sink.png "Sink")
+::: {#fig-sink .captioned-figure}
+<img src="./images/sink.png" alt="Sink" width="1000">
+
+Sink
+:::
 
 We can deal with these features two ways. The first is to "fill" them. Which means the dead end cells will have their elevations raised until the pit is filled and water can flow downhill. See below.
 
-![Filled](images/filled.png "Filled")
+::: {#fig-filled .captioned-figure}
+<img src="./images/filled.png" alt="Filled" width="1000">
+
+Filled
+:::
 
 The second way we can deal with these features is to "breach" them. This means the side of the feature that is blocking flow will be lowered to allow water to flow downhill. See below.
 
-![Breached](images/breached.png "Breached")
+::: {#fig-breached .captioned-figure}
+<img src="./images/breached.png" alt="Breached" width="1000">
+
+Breached
+:::
 
 We are going to do both to prep our DEM. We will first breach depressions using wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming depressions.
 
@@ -178,7 +206,12 @@ Using another function, we can just output the flow direction for each cell. Thi
 
 This tool outputs a raster that tells us how many cells drain to each cell. In other words, for a given cell in the raster, its value corresponds to the number of cells that drain to it. As a result, this highlights streams quite well.
 
-![D8 Flow Direction](images/D8 flow direction.png "D8 Flow Direction")
+
+::: {#fig-breached .captioned-figure}
+<img src="./images/D8-flow-direction.png.png" alt="D8 Flow Direction" width="1000">
+
+D8 Flow Direction
+:::
 
 The wbt_d8_flow_accumulation() function takes an input of a DEM or a flow direction (pointer) file. We will pass it out filled, breached DEM. The default output is the number of cells draining to each cell, but you can also choose specific contributing area or contributing area.
 
@@ -208,7 +241,11 @@ With D infinity, the flow direction for each cell can be any angle. Endless poss
 
 If the angle does not point squarely at one of the neighboring cells, the flow from the focus cell can be SPLIT between neighboring cells. We will see the resulting difference this makes when we look at the output. 
 
-![D inf Flow Direction](images/dinf-flow direction.png "D inf Flow Direction")
+::: {#fig-breached .captioned-figure}
+<img src="./images/dinf-flow direction.png" alt="D inf Flow Direction" width="1000">
+
+D inf Flow Direction
+:::
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like the D8 function it will take a flow direction (pointer) file or a DEM. We will give it out filled and breached DEM. 
 
@@ -374,7 +411,7 @@ twidvals <-  extract(x = twid, #raster
 
 points$twid <- twidvals$DinfFAsca
 
-points
+print(points)
 ```
 
 ### Extract values from multiple rasters at once
@@ -398,7 +435,7 @@ raster_values <-extract(x = raster_stack, #raster
 
 points <- cbind(points, raster_values)
 
-points
+print(points)
 
 ```
 
