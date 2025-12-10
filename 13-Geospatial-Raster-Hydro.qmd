@@ -208,7 +208,7 @@ This tool outputs a raster that tells us how many cells drain to each cell. In o
 
 
 ::: {#fig-breached .captioned-figure}
-<img src="./images/D8-flow-direction.png.png" alt="D8 Flow Direction" width="1000">
+<img src="./images/D8-flow-direction.png" alt="D8 Flow Direction" width="1000">
 
 D8 Flow Direction
 :::
