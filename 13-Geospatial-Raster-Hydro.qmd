@@ -130,15 +130,15 @@ But we have to cool our jets for a second. If we are going to do hydrologic anal
 
 Our hydrologic tools often work on the premise of following water down the hillslope based on the elevation of the cells in the DEM. If, along a flowpath, there is no cell lower than a location, the algorithm we are using will stop there. This is called a sink, pit, or depression. See the figure below.
 
-![Sink](images/sink.png "Sink")
+![](images/sink.png "Sink")
 
 We can deal with these features two ways. The first is to "fill" them. Which means the dead end cells will have their elevations raised until the pit is filled and water can flow downhill. See below.
 
-![Filled](images/filled.png "Filled")
+![](images/filled.png "Filled")
 
 The second way we can deal with these features is to "breach" them. This means the side of the feature that is blocking flow will be lowered to allow water to flow downhill. See below.
 
-![Breached](images/breached.png "Breached")
+![](images/breached.png "Breached")
 
 We are going to do both to prep our DEM. We will first breach depressions using wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming depressions.
 
@@ -197,7 +197,7 @@ Using another function, we can just output the flow direction for each cell. Thi
 
 This tool outputs a raster that tells us how many cells drain to each cell. In other words, for a given cell in the raster, its value corresponds to the number of cells that drain to it. As a result, this highlights streams quite well.
 
-![D8 Flow Direction](images/D8 flow direction.png "D8 Flow Direction")
+![](images/D8 flow direction.png "D8 Flow Direction")
 
 The wbt_d8_flow_accumulation() function takes an input of a DEM or a flow direction (pointer) file. We will pass it out filled, breached DEM. The default output is the number of cells draining to each cell, but you can also choose specific contributing area or contributing area.
 
@@ -227,7 +227,7 @@ With D infinity, the flow direction for each cell can be any angle. Endless poss
 
 If the angle does not point squarely at one of the neighboring cells, the flow from the focus cell can be SPLIT between neighboring cells. We will see the resulting difference this makes when we look at the output. 
 
-![D inf Flow Direction](images/dinf-flow direction.png "D inf Flow Direction")
+![](images/dinf-flow direction.png "D inf Flow Direction")
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like the D8 function it will take a flow direction (pointer) file or a DEM. We will give it out filled and breached DEM. 
 
