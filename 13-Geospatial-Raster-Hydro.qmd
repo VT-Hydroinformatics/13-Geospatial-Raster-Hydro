@@ -1,11 +1,9 @@
 ---
 title: "Chapter 13: Geospatial R Raster"
 date: today
-github: https://github.com/VT-Hydroinformatics/13-Geospatial-Raster-Hydro
 author:
   - name: JP Gannon
     orcid: 0000-0002-4595-3214
-    github: jpgannon
     url: https://jpgannon.github.io/
     affiliation: 
       - name: Virginia Tech
@@ -14,9 +12,10 @@ format:
   html: 
     self-contained: true
   ipynb:
-      nb-frontmatter: true
-jupyter: 
-  kernel: ir
+    nb-frontmatter: true
+    jupyter:
+      kernel: ir
+      ipynb-shell-interactivity: all
 execute: 
   enabled: true
 ---
@@ -84,19 +83,10 @@ Now let's plot the DEM. We will use the same syntax as we did in the previous le
 dem_plot_interactive_fp <- "./images/dem-plot.html"
 dem_plot_static_fp <- "./images/dem-plot.png"
 
-dem_plot <- tm_shape(dem)+
+tm_shape(dem)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE)+
   tm_scale_bar()
-
-dem_plot |> tmap_save(filename=dem_plot_interactive_fp)
-dem_plot |> tmap_save(filename=dem_plot_static_fp)
 ```
-
-::: {#fig-dem-plot .captioned-figure}
-<img src="./images/dem-plot.png" alt="DEM plot" width="1000">
-
-Screenshot of DEM plot. View the **[interactive map here](./images/dem-plot.html)**. 
-:::
 
 ## Generate a hillshade
 
@@ -121,29 +111,16 @@ We will then read the output hillshade in with raster() and make a map with tmap
 
 Notice how much more you can see in the landscape!
 ```{r}
-# define where to save static and interactive maps
-hillshade_plot_interactive_fp <- "./images/hillshade-plot.html"
-hillshade_plot_static_fp <- "./images/hillshade-plot.png"
-
 wbt_hillshade(dem = "McDonaldHollowDEM/brushDEMsm_5m_crs.tif",
               output = "McDonaldHollowDEM/brush_hillshade.tif",
               azimuth = 115)
 
 hillshade <- rast("McDonaldHollowDEM/brush_hillshade.tif")
 
-hillshade_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont", palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()
-
-hillshade_plot |> tmap_save(filename=hillshade_plot_interactive_fp)
-hillshade_plot |> tmap_save(filename=hillshade_plot_static_fp)
 ```
-
-::: {#fig-hillshade-plot .captioned-figure}
-<img src="./images/hillshade-plot.png" alt="Hillshade plot" width="1000">
-
-Screenshot of hillshade plot. View the **[interactive map here](./images/hillshade-plot.html)**. 
-:::
 
 ## Prepare DEM for Hydrology Analyses
 
@@ -153,27 +130,15 @@ But we have to cool our jets for a second. If we are going to do hydrologic anal
 
 Our hydrologic tools often work on the premise of following water down the hillslope based on the elevation of the cells in the DEM. If, along a flowpath, there is no cell lower than a location, the algorithm we are using will stop there. This is called a sink, pit, or depression. See the figure below.
 
-::: {#fig-sink .captioned-figure}
-<img src="./images/sink.png" alt="Sink" width="1000">
-
-Sink
-:::
+![Sink](images/sink.png "Sink")
 
 We can deal with these features two ways. The first is to "fill" them. Which means the dead end cells will have their elevations raised until the pit is filled and water can flow downhill. See below.
 
-::: {#fig-filled .captioned-figure}
-<img src="./images/filled.png" alt="Filled" width="1000">
-
-Filled
-:::
+![Filled](images/filled.png "Filled")
 
 The second way we can deal with these features is to "breach" them. This means the side of the feature that is blocking flow will be lowered to allow water to flow downhill. See below.
 
-::: {#fig-breached .captioned-figure}
-<img src="./images/breached.png" alt="Breached" width="1000">
-
-Breached
-:::
+![Breached](images/breached.png "Breached")
 
 We are going to do both to prep our DEM. We will first breach depressions using wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming depressions.
 
@@ -209,10 +174,6 @@ Where where changes made?
 What do you think these pit/depression features represent in real life?
 
 ```{r}
-# define where to save static and interactive maps
-filled_breached_plot_interactive_fp <- "./images/filled-breached-plot.html"
-filled_breached_plot_static_fp <- "./images/filled-breached-plot.png"
-
 filled_breached <- rast("McDonaldHollowDEM/bmstationdem_filled_breached.tif")
 
 ## What did this do?
@@ -220,22 +181,13 @@ difference <- dem - filled_breached
 
 difference[difference == 0] <- NA
 
-filled_breached_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()+
 tm_shape(difference)+
   tm_raster(style = "cont",legend.show = TRUE)+
   tm_scale_bar()
-
-filled_breached_plot |> tmap_save(filename=filled_breached_plot_interactive_fp)
-filled_breached_plot |> tmap_save(filename=filled_breached_plot_static_fp)
 ```
-
-::: {#fig-hillshade-plot .captioned-figure}
-<img src="./images/filled-breached-plot.png" alt="Filled/Breached plot" width="1000">
-
-Screenshot of filled and breached plot. View the **[interactive map here](./images/filled-breached-plot.html)**. 
-:::
 
 ## D8 Flow Accumulation
 
@@ -245,12 +197,7 @@ Using another function, we can just output the flow direction for each cell. Thi
 
 This tool outputs a raster that tells us how many cells drain to each cell. In other words, for a given cell in the raster, its value corresponds to the number of cells that drain to it. As a result, this highlights streams quite well.
 
-
-::: {#fig-breached .captioned-figure}
-<img src="./images/D8-flow-direction.png" alt="D8 Flow Direction" width="1000">
-
-D8 Flow Direction
-:::
+![D8 Flow Direction](images/D8 flow direction.png "D8 Flow Direction")
 
 The wbt_d8_flow_accumulation() function takes an input of a DEM or a flow direction (pointer) file. We will pass it out filled, breached DEM. The default output is the number of cells draining to each cell, but you can also choose specific contributing area or contributing area.
 
@@ -260,32 +207,17 @@ Where are the highest values?
 Where are the lowest values?
 
 ```{r}
-# define where to save static and interactive maps
-d8_plot_interactive_fp <- "./images/d8-plot.html"
-d8_plot_static_fp <- "./images/d8-plot.png"
-
 wbt_d8_flow_accumulation(input = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                          output = "McDonaldHollowDEM/D8FA.tif")
 
 d8 <- rast("McDonaldHollowDEM/D8FA.tif")
 
-
-
-d8_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
 tm_shape(log(d8))+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = .5)+
-  tm_scale_bar() 
-
-d8_plot |> tmap_save(filename=d8_plot_interactive_fp)
-d8_plot |> tmap_save(filename=d8_plot_static_fp)
+  tm_scale_bar()
 ```
-
-::: {#fig-d8-plot .captioned-figure}
-<img src="./images/d8-plot.png" alt="D8 plot" width="1000">
-
-Screenshot of D8 flow plot. View the **[interactive map here](./images/d8-plot.html)**. 
-:::
 
 ## D infinity flow accumulation
 
@@ -295,11 +227,7 @@ With D infinity, the flow direction for each cell can be any angle. Endless poss
 
 If the angle does not point squarely at one of the neighboring cells, the flow from the focus cell can be SPLIT between neighboring cells. We will see the resulting difference this makes when we look at the output. 
 
-::: {#fig-breached .captioned-figure}
-<img src="./images/dinf-flow direction.png" alt="D inf Flow Direction" width="1000">
-
-D inf Flow Direction
-:::
+![D inf Flow Direction](images/dinf-flow direction.png "D inf Flow Direction")
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like the D8 function it will take a flow direction (pointer) file or a DEM. We will give it out filled and breached DEM. 
 
@@ -310,30 +238,17 @@ How does this look different from the D8 results?
 Which do you think represents reality better? Why?
 
 ```{r}
-# define where to save static and interactive maps
-dinf_plot_interactive_fp <- "./images/dinf-plot.html"
-dinf_plot_static_fp <- "./images/dinf-plot.png"
-
 wbt_d_inf_flow_accumulation("McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                          "McDonaldHollowDEM/DinfFA.tif")
 
 dinf <- rast("McDonaldHollowDEM/DinfFA.tif")
 
-dinf_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
 tm_shape(log(dinf))+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
-  tm_scale_bar() 
-
-dinf_plot |> tmap_save(filename=dinf_plot_interactive_fp)
-dinf_plot |> tmap_save(filename=dinf_plot_static_fp)
+  tm_scale_bar()
 ```
-
-::: {#fig-dinf-plot .captioned-figure}
-<img src="./images/dinf-plot.png" alt="Dinf plot" width="1000">
-
-Screenshot of D infinity flow plot. View the **[interactive map here](./images/dinf-plot.html)**. 
-:::
 
 ## Topographic Wetness Index
 
@@ -352,10 +267,6 @@ We will then plot TWI with the same approach we used for the flow accumulation d
 We get some funkiness around the edges of the DEM, so we will also filter the twi output so the visualization looks better.
 
 ```{r}
-# define where to save static and interactive maps
-twi_plot_interactive_fp <- "./images/twi-plot.html"
-twi_plot_static_fp <- "./images/twi-plot.png"
-
 wbt_d_inf_flow_accumulation(input = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                             output = "McDonaldHollowDEM/DinfFAsca.tif",
                             out_type = "Specific Contributing Area")
@@ -372,21 +283,12 @@ twi <- rast("McDonaldHollowDEM/TWI.tif")
 
 twi[twi > 0] <- NA
 
-twi_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
 tm_shape(twi)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
-  tm_scale_bar() 
-
-twi_plot |> tmap_save(filename=twi_plot_interactive_fp)
-twi_plot |> tmap_save(filename=twi_plot_static_fp)
+  tm_scale_bar()
 ```
-
-::: {#fig-twi-plot .captioned-figure}
-<img src="./images/twi-plot.png" alt="TWI plot" width="1000">
-
-Screenshot of Topographic Wetness Index (TWI) plot. View the **[interactive map here](./images/twi-plot.html)**. 
-:::
 
 ## Downslope TWI
 
@@ -401,10 +303,6 @@ Essentially, this index captures the fact that you should expect a 50 meter long
 Similar to TWI we get some edge issues so we will filter the result to make the visualization look better.
 
 ```{r}
-# define where to save static and interactive maps
-downslope_twi_plot_interactive_fp <- "./images/downslope-twi-plot.html"
-downslope_twi_plot_static_fp <- "./images/downslope-twi-plot.png"
-
 wbt_downslope_index(dem = "McDonaldHollowDEM/bmstationdem_filled_breached.tif",
                     output = "McDonaldHollowDEM/downslope_index.tif",
                     out_type = "tangent")
@@ -417,22 +315,12 @@ twid <- log(dinfFA / downslope_index)
 
 twid[twid > 40] <- NA
 
-
-downslope_twi_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
 tm_shape(twid)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
-  tm_scale_bar() 
-
-downslope_twi_plot |> tmap_save(filename=downslope_twi_plot_interactive_fp)
-downslope_twi_plot |> tmap_save(filename=downslope_twi_plot_static_fp)
+  tm_scale_bar()
 ```
-
-::: {#fig-twi-plot .captioned-figure}
-<img src="./images/downslope-twi-plot.png" alt="Downslope TWI plot" width="1000">
-
-Screenshot of Downslope TWI plot. View the **[interactive map here](./images/downslope-twi-plot.html)**. 
-:::
 
 ## Map Stream Network
 
@@ -447,10 +335,6 @@ Then wbt_raster_streams_to_vector() will take the outut from wbt_extract_streams
 Below we extract the streams, generate a D8 pointer file, and then convert the raster streams to vector. We will then plot the streams on the hillshade.
 
 ```{r}
-# define where to save static and interactive maps
-streams_hillshade_plot_interactive_fp <- "./images/streams-hillshade-plot.html"
-streams_hillshade_plot_static_fp <- "./images/streams-hillshade-plot.png"
-
 wbt_extract_streams(flow_accum = "McDonaldHollowDEM/D8FA.tif",
                     output = "McDonaldHollowDEM/raster_streams.tif",
                     threshold = 6000)
@@ -464,21 +348,13 @@ wbt_raster_streams_to_vector(streams = "McDonaldHollowDEM/raster_streams.tif",
 
 streams <- read_sf("McDonaldHollowDEM/streams.shp")
 
-streams_hillshade_plot <- tm_shape(hillshade)+
+tm_shape(hillshade)+
   tm_raster(style = "cont",palette = "-Greys", legend.show = FALSE)+
 tm_shape(streams)+
   tm_lines(col = "blue")+
-  tm_scale_bar() 
-
-streams_hillshade_plot |> tmap_save(filename=streams_hillshade_plot_interactive_fp)
-streams_hillshade_plot |> tmap_save(filename=streams_hillshade_plot_static_fp)
+  tm_scale_bar()
 ```
 
-::: {#fig-twi-plot .captioned-figure}
-<img src="./images/streams-hillshade-plot.png" alt="Streams/Hillshade plot" width="1000">
-
-Screenshot of stream network plotted over hillshade. View the **[interactive map here](./images/streams-hillshade-plot.html)**. 
-:::
 ## Extract raster values to point locations
 
 Now let's say you have some sample or monitoring sites in this study area. You may want to know what the values of the rasters we just made are for your sites. Below we will read in the coordinates of a few sites and extract data from a single raster and then multiple at once.
@@ -517,7 +393,7 @@ twidvals <-  extract(x = twid, #raster
 
 points$twid <- twidvals$DinfFAsca
 
-print(points)
+points
 ```
 
 ### Extract values from multiple rasters at once
@@ -541,7 +417,7 @@ raster_values <-extract(x = raster_stack, #raster
 
 points <- cbind(points, raster_values)
 
-print(points)
+points
 
 ```
 
@@ -605,5 +481,3 @@ ggplot(rasters_df, aes(x = demslope, y = brushDEMsm_5m))+
 
 
 ```
-
-
