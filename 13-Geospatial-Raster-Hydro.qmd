@@ -87,6 +87,7 @@ tm_shape(dem)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/dem-plot.html)**
 
 ## Generate a hillshade
 
@@ -121,6 +122,7 @@ tm_shape(hillshade)+
   tm_raster(style = "cont", palette = "-Greys", legend.show = FALSE)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/hillshade-plot.html)**
 
 ## Prepare DEM for Hydrology Analyses
 
@@ -130,15 +132,18 @@ But we have to cool our jets for a second. If we are going to do hydrologic anal
 
 Our hydrologic tools often work on the premise of following water down the hillslope based on the elevation of the cells in the DEM. If, along a flowpath, there is no cell lower than a location, the algorithm we are using will stop there. This is called a sink, pit, or depression. See the figure below.
 
-![](images/sink.png "Sink")
+![Sink](images/sink.png "Sink")\
+_Sink_
 
 We can deal with these features two ways. The first is to "fill" them. Which means the dead end cells will have their elevations raised until the pit is filled and water can flow downhill. See below.
 
-![](images/filled.png "Filled")
+![Filled](images/filled.png "Filled")\
+_Filled_
 
 The second way we can deal with these features is to "breach" them. This means the side of the feature that is blocking flow will be lowered to allow water to flow downhill. See below.
 
-![](images/breached.png "Breached")
+![Breached](images/breached.png "Breached")\
+_Breached_
 
 We are going to do both to prep our DEM. We will first breach depressions using wbt_breach_depressions_least_cost(), which will lower the elevation of the cells damming depressions.
 
@@ -188,6 +193,7 @@ tm_shape(difference)+
   tm_raster(style = "cont",legend.show = TRUE)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/filled-breached-plot.html)**
 
 ## D8 Flow Accumulation
 
@@ -197,7 +203,8 @@ Using another function, we can just output the flow direction for each cell. Thi
 
 This tool outputs a raster that tells us how many cells drain to each cell. In other words, for a given cell in the raster, its value corresponds to the number of cells that drain to it. As a result, this highlights streams quite well.
 
-![](images/D8 flow direction.png "D8 Flow Direction")
+![D8 Flow Direction](images/D8 flow direction.png "D8 Flow Direction")\
+_D8 Flow Direction_
 
 The wbt_d8_flow_accumulation() function takes an input of a DEM or a flow direction (pointer) file. We will pass it out filled, breached DEM. The default output is the number of cells draining to each cell, but you can also choose specific contributing area or contributing area.
 
@@ -218,6 +225,7 @@ tm_shape(log(d8))+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = .5)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/d8-plot.html)**
 
 ## D infinity flow accumulation
 
@@ -227,7 +235,8 @@ With D infinity, the flow direction for each cell can be any angle. Endless poss
 
 If the angle does not point squarely at one of the neighboring cells, the flow from the focus cell can be SPLIT between neighboring cells. We will see the resulting difference this makes when we look at the output. 
 
-![](images/dinf-flow direction.png "D inf Flow Direction")
+![D inf Flow Direction](images/dinf-flow direction.png "D inf Flow Direction")\
+_D inf Flow Direction_
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like the D8 function it will take a flow direction (pointer) file or a DEM. We will give it out filled and breached DEM. 
 
@@ -249,6 +258,7 @@ tm_shape(log(dinf))+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/dinf-plot.html)**
 
 ## Topographic Wetness Index
 
@@ -289,6 +299,7 @@ tm_shape(twi)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/twi-plot.html)**
 
 ## Downslope TWI
 
@@ -321,6 +332,7 @@ tm_shape(twid)+
   tm_raster(style = "cont", palette = "PuOr", legend.show = TRUE, alpha = 0.5)+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/downslope-twi-plot.html)**
 
 ## Map Stream Network
 
@@ -354,6 +366,7 @@ tm_shape(streams)+
   tm_lines(col = "blue")+
   tm_scale_bar()
 ```
+**[View the interactive plot here](images/streams-hillshade-plot.html)**
 
 ## Extract raster values to point locations
 
@@ -380,6 +393,7 @@ tm_shape(twid)+
 tm_shape(pointsSP)+
   tm_dots(col = "red")
 ```
+
 ### Extract values from a single raster
 
 We can extract values from any raster using the extract() function in the raster package. We give this funciton the raster we want to pull data from (x) and the points where we want data (y). Then we specify how we want it to grab data from the raster. "Simple" just grabs the value at the locaitons specified. If we specify "bilinear" it will return an interpolated value based on the four nearest raster cells.
