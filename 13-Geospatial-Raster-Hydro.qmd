@@ -9,15 +9,23 @@ author:
       - name: Virginia Tech
         url: https://www.vt.edu/
 format:
-  html: 
+  html:
     self-contained: true
   ipynb:
     nb-frontmatter: true
-    jupyter:
-      kernel: ir
-      ipynb-shell-interactivity: all
-execute: 
+execute:
   enabled: true
+jupyter:
+  jupytext:
+    text_representation:
+      extension: .qmd
+      format_name: quarto
+      format_version: '1.0'
+      jupytext_version: 1.19.1
+  kernelspec:
+    display_name: R
+    language: R
+    name: ir
 ---
 
 # Geospatial R Raster - Hydro Analyses 
@@ -411,7 +419,7 @@ twidvals <-  extract(x = twid, #raster
 
 points$twid <- twidvals$DinfFAsca
 
-points
+print(points)
 ```
 
 ### Extract values from multiple rasters at once
@@ -435,7 +443,7 @@ raster_values <-extract(x = raster_stack, #raster
 
 points <- cbind(points, raster_values)
 
-points
+print(points)
 
 ```
 
