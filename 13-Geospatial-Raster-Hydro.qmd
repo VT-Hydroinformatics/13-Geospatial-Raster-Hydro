@@ -1,31 +1,10 @@
 ---
 title: "Chapter 13: Geospatial R Raster"
 date: today
-author:
-  - name: JP Gannon
-    orcid: 0000-0002-4595-3214
-    url: https://jpgannon.github.io/
-    affiliation: 
-      - name: Virginia Tech
-        url: https://www.vt.edu/
-format:
-  html:
-    self-contained: true
-  ipynb:
-    nb-frontmatter: true
+author: JP Gannon
+format: gfm
 execute:
   enabled: true
-jupyter:
-  jupytext:
-    text_representation:
-      extension: .qmd
-      format_name: quarto
-      format_version: '1.0'
-      jupytext_version: 1.19.1
-  kernelspec:
-    display_name: R
-    language: R
-    name: ir
 ---
 
 # Geospatial R Raster - Hydro Analyses 
