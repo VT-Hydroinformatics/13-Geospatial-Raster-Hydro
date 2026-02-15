@@ -193,7 +193,7 @@ Using another function, we can just output the flow direction for each cell. Thi
 
 This tool outputs a raster that tells us how many cells drain to each cell. In other words, for a given cell in the raster, its value corresponds to the number of cells that drain to it. As a result, this highlights streams quite well.
 
-![](images/D8 flow direction.png "D8 Flow Direction")
+![](images/D8flowdirection.png "D8 Flow Direction")
 
 _D8 Flow Direction_
 
@@ -226,7 +226,7 @@ With D infinity, the flow direction for each cell can be any angle. Endless poss
 
 If the angle does not point squarely at one of the neighboring cells, the flow from the focus cell can be SPLIT between neighboring cells. We will see the resulting difference this makes when we look at the output. 
 
-![D inf Flow Direction](images/dinf-flow direction.png "D inf Flow Direction")\
+![D inf Flow Direction](images/dinf-flowdirection.png "D inf Flow Direction")\
 _D inf Flow Direction_
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like the D8 function it will take a flow direction (pointer) file or a DEM. We will give it out filled and breached DEM. 

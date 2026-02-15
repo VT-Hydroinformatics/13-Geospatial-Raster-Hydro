@@ -1,6 +1,6 @@
 # Chapter 13: Geospatial R Raster
 JP Gannon
-2026-02-12
+2026-02-15
 
 # Geospatial R Raster - Hydro Analyses
 
@@ -37,9 +37,9 @@ install_whitebox()
 ```
 
     Performing one-time download of WhiteboxTools binary from
-         https://www.whiteboxgeo.com/WBT_Windows/WhiteboxTools_win_amd64.zip 
+         https://www.whiteboxgeo.com/WBT_Darwin/WhiteboxTools_darwin_m_series.zip 
     (This could take a few minutes, please be patient...)
-    WhiteboxTools binary is located here:  C:/Users/AbnerBogan/AppData/Roaming/R/data/R/whitebox/WBT/whitebox_tools.exe 
+    WhiteboxTools binary is located here:  /Users/jpgannon/Library/Application Support/org.R-project.R/R/whitebox/WBT/whitebox_tools 
     You can now start using whitebox
         library(whitebox)
         wbt_version()
@@ -79,8 +79,7 @@ is done as if the dem was just a normal vector. COOL!
 tmap_mode("view")
 ```
 
-    ℹ tmap modes "plot" - "view"
-    ℹ toggle with `tmap::ttm()`
+    ℹ tmap mode set to "view".
 
 ``` r
 dem <- rast("McDonaldHollowDEM/brushDEMsm_5m.tif")
@@ -120,9 +119,6 @@ tm_shape(dem)+
     [cols4all] color palettes: use palettes from the R package cols4all. Run
     `cols4all::c4a_gui()` to explore them. The old palette name "PuOr" is named
     "brewer.pu_or"
-
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
 
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-3-1.png)
 
@@ -193,9 +189,6 @@ tm_shape(hillshade)+
     [cols4all] color palettes: use palettes from the R package cols4all. Run
     `cols4all::c4a_gui()` to explore them. The old palette name "-Greys" is named
     "greys" (in long format "brewer.greys")
-
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
 
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-4-1.png)
 
@@ -311,11 +304,6 @@ tm_shape(difference)+
     "greys" (in long format "brewer.greys")
     Variable(s) "col" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full range of visual values.
 
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-    tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-6-1.png)
 
 **[View the interactive plot here](images/filled-breached-plot.html)**
@@ -341,7 +329,7 @@ cell. In other words, for a given cell in the raster, its value
 corresponds to the number of cells that drain to it. As a result, this
 highlights streams quite well.
 
-![](images/D8%20flow%20direction.png "D8 Flow Direction")
+![](images/D8flowdirection.png "D8 Flow Direction")
 
 *D8 Flow Direction*
 
@@ -390,11 +378,6 @@ tm_shape(log(d8))+
     `cols4all::c4a_gui()` to explore them. The old palette name "PuOr" is named
     "brewer.pu_or"
 
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-    tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-7-1.png)
 
 **[View the interactive plot here](images/d8-plot.html)**
@@ -413,7 +396,7 @@ the flow from the focus cell can be SPLIT between neighboring cells. We
 will see the resulting difference this makes when we look at the output.
 
 ![D inf Flow
-Direction](images/dinf-flow%20direction.png "D inf Flow Direction")  
+Direction](images/dinf-flowdirection.png "D inf Flow Direction")  
 *D inf Flow Direction*
 
 The function for d infinity is wbt_d_inf_flow_accumulation() and like
@@ -457,11 +440,6 @@ tm_shape(log(dinf))+
     `cols4all::c4a_gui()` to explore them. The old palette name "PuOr" is named
     "brewer.pu_or"
     Variable(s) "col" contains positive and negative values, so midpoint is set to 0. Set midpoint = NA to show the full range of visual values.
-
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-    tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
 
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-8-1.png)
 
@@ -538,11 +516,6 @@ tm_shape(twi)+
     `cols4all::c4a_gui()` to explore them. The old palette name "PuOr" is named
     "brewer.pu_or"
 
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-    tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-9-1.png)
 
 **[View the interactive plot here](images/twi-plot.html)**
@@ -604,11 +577,6 @@ tm_shape(twid)+
     [cols4all] color palettes: use palettes from the R package cols4all. Run
     `cols4all::c4a_gui()` to explore them. The old palette name "PuOr" is named
     "brewer.pu_or"
-
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-    tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
 
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-10-1.png)
 
@@ -674,9 +642,6 @@ tm_shape(streams)+
     `cols4all::c4a_gui()` to explore them. The old palette name "-Greys" is named
     "greys" (in long format "brewer.greys")
 
-    Warning: tm_scale_intervals `label.style = "continuous"` implementation in view mode
-    work in progress
-
 ![](13-Geospatial-Raster-Hydro_files/figure-commonmark/unnamed-chunk-11-1.png)
 
 **[View the interactive plot here](images/streams-hillshade-plot.html)**
@@ -717,7 +682,7 @@ pointsSP <- st_as_sf(points, coords = c("lon", "lat"), crs = 4326)
 tmap_mode("plot")
 ```
 
-    ℹ tmap modes "plot" - "view"
+    ℹ tmap mode set to "plot".
 
 ``` r
 tm_shape(twid)+
